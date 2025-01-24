@@ -28,7 +28,7 @@
 - c++23
 - focus on readability
 - object-oriented design
-- self-documenting coding
+- self-documenting code
 - modular programming
 
 ## 参考资料

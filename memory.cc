@@ -8,12 +8,12 @@ template <class T> struct shared_ptr {
   std::atomic<int> *refcnt;
 
   shared_ptr(T *p = nullptr) : ptr{p}, refcnt{new std::atomic<int>(1)} {}
-  shared_ptr(shared_ptr &other) : ptr{other.ptr}, refcnt{other.refcnt} {
+  shared_ptr(const shared_ptr &other) : ptr{other.ptr}, refcnt{other.refcnt} {
     if (ptr)
       (*refcnt)++;
   }
 
-  shared_ptr &operator=(shared_ptr &rhs) {
+  shared_ptr &operator=(const shared_ptr &rhs) {
     destruct();
     ptr = rhs.ptr;
     refcnt = rhs.refcnt;

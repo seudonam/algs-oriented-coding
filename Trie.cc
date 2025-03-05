@@ -1,7 +1,7 @@
 #include <cassert>
+#include <cstddef>
 #include <print>
 #include <string>
-#include <utility>
 #include <vector>
 
 struct Trie {
@@ -14,21 +14,21 @@ struct Trie {
   Trie() {}
   int size() { return sz; }
   bool empty() { return size() == 0; }
-  bool contains(std::string_view key) { return get(root, key, 0); }
-  Node *get(Node *x, std::string_view key, int d) {
+  bool contains(std::string_view key) { return get(root, key, 0)->val; }
+  Node *get(Node *x, std::string_view key, size_t d) {
     if (x == nullptr)
       return nullptr;
-    if (std::cmp_equal(d, key.length()))
+    if (d == key.size())
       return x;
     int c = key.at(d);
     return get(x->next[c], key, d + 1);
   }
 
   void insert(std::string_view key) { root = insert(root, key, 0); }
-  Node *insert(Node *x, std::string_view key, int d) {
+  Node *insert(Node *x, std::string_view key, size_t d) {
     if (x == nullptr)
       x = new Node;
-    if (std::cmp_equal(d, key.length())) {
+    if (d == key.size()) {
       if (x->val == false)
         sz++;
       x->val = true;
@@ -64,12 +64,13 @@ struct Trie {
       return "";
     return query.substr(0, length);
   }
-  int longestPrefixOf(Node *x, std::string_view query, int d, int length) {
+  int longestPrefixOf(Node *x, std::string_view query, size_t d,
+                      size_t length) {
     if (x == nullptr)
       return length;
     if (x->val)
       length = d;
-    if (std::cmp_equal(d, query.length()))
+    if (d == query.length())
       return length;
     int c = query.at(d);
     return longestPrefixOf(x->next[c], query, d + 1, length);
@@ -79,7 +80,7 @@ struct Trie {
   Node *remove(Node *x, std::string_view key, int d) {
     if (x == nullptr)
       return nullptr;
-    if (std::cmp_equal(d, key.length())) {
+    if (d == key.size()) {
       if (x->val == true)
         sz--;
       x->val = false;

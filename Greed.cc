@@ -55,33 +55,6 @@ struct dikstra {
   }
 };
 
-struct naive_dikstra {
-  std::deque<bool> marked;
-  std::deque<int> dist_to;
-  naive_dikstra(const adj_list<directed_edge> &graph, int src)
-      : marked(graph.size(), false), dist_to(graph.size(), 0xffff) {
-    dist_to[src] = 0;
-    for (int k = 0; k < graph.size(); k++) {
-      int x{-1}, min{0xffff};
-      for (int v = 0; v < graph.size(); v++) {
-        if (!marked[v] && dist_to[v] < min) {
-          x = v;
-          min = dist_to[v];
-        }
-      }
-      relax(graph, x);
-    }
-  }
-  void relax(const adj_list<directed_edge> &graph, int v) {
-    marked[v] = true;
-    for (const auto &e : graph[v]) {
-      int w{e.to};
-      if (dist_to[w] > dist_to[v] + e.weight)
-        dist_to[w] = dist_to[v] + e.weight;
-    }
-  }
-};
-
 struct edge {
   int v, w, weight;
   int other(int x) const { return x == v ? w : v; }
@@ -95,7 +68,7 @@ struct prim {
   std::priority_queue<edge, std::deque<edge>, std::greater<edge>> pq;
 
   prim(const adj_list<edge> &graph) : weight{0}, marked(graph.size(), false) {
-    for (int v = 0; v < graph.size(); ++v)
+    for (size_t v = 0; v < graph.size(); ++v)
       if (!marked[v])
         search(graph, v);
   }
@@ -135,8 +108,8 @@ struct kruskal {
   }
   void join(int x, int y) { parent[x] = y; }
 
-  kruskal(const std::deque<edge> &graph, int num) : weight{0}, parent(num) {
-    for (int v = 0; v < num; ++v)
+  kruskal(const std::deque<edge> &graph, size_t num) : weight{0}, parent(num) {
+    for (size_t v = 0; v < num; ++v)
       parent[v] = v;
     std::priority_queue<edge, std::deque<edge>, std::greater<edge>> pq(
         graph.begin(), graph.end());
@@ -182,7 +155,7 @@ int main() {
     }
 
     dikstra dsp(ewd, 0);
-    for (int i(0), sz(ewd.size()); i < sz; ++i) {
+    for (size_t i = 0; i < ewd.size(); ++i) {
       std::print("v{}\t", i);
       if (dsp.has_path_to(i)) {
         auto path{dsp.path_to(i)};
@@ -193,10 +166,6 @@ int main() {
       }
       std::print("\n");
     }
-    naive_dikstra ndsp(ewd, 0);
-    assert(std::equal(dsp.dist_to.begin(), dsp.dist_to.end(),
-                      ndsp.dist_to.begin(), ndsp.dist_to.end()));
-    std::print("\n");
 
     kruskal kmst(edge_list, v);
     auto klist{kmst.mst};

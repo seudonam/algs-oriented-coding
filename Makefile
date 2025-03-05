@@ -8,8 +8,7 @@ CFLAGS += -fsanitize=undefined -fsanitize=address
 CXX = clang++
 CXXFLAGS = -Og -Wall -Wextra -Wpedantic -fno-omit-frame-pointer
 CXXFLAGS += -fsanitize=undefined -fsanitize=address
-CXXFLAGS += -std=c++23
-CXXFLAGS += -Wno-sign-compare
+CXXFLAGS += -std=c++23 -fno-exceptions
 
 ifeq ($(CXX), clang++)
 	CXXFLAGS += -stdlib=libc++ -fuse-ld=lld
